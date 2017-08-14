@@ -7,12 +7,29 @@
 //
 
 import UIKit
+import GoogleMaps
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var panoramaView: GMSPanoramaView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        panoramaView.delegate = self
+        
+        panoramaView.moveNearCoordinate(CLLocationCoordinate2D(latitude: 37.3317134, longitude: -122.0307466))
+       // panoramaView.moveNearCoordinate(CLLocationCoordinate2D(latitude: 12.3, longitude: 98.2))
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2, qos: DispatchQoS.default, flags: DispatchWorkItemFlags.noQoS) { 
+            self.panoramaView.animate(to: GMSPanoramaCamera.init(heading: 90, pitch: 0, zoom: 1) , animationDuration: 2)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -23,3 +40,8 @@ class ViewController: UIViewController {
 
 }
 
+extension ViewController: GMSPanoramaViewDelegate {
+    func panoramaView(_ view: GMSPanoramaView, error: Error, onMoveNearCoordinate coordinate: CLLocationCoordinate2D) {
+        print(error.localizedDescription)
+    }
+}
